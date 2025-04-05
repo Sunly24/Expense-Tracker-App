@@ -31,10 +31,8 @@ npm install
 
 Run the server
 ```bash
-# Development mode
 npm run dev
 
-# Production mode
 npm start
 ```
 
