@@ -29,6 +29,11 @@ cd Expense-Tracker-App/backend
 npm install
 ```
 
+Run Service
+```bash
+node app.js
+```
+
  Run the application
 ```bash
 flutter run
