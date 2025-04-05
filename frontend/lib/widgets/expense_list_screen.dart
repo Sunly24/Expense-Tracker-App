@@ -1,116 +1,140 @@
 import 'package:flutter/material.dart';
-import '../models/expense.dart';
+import 'package:provider/provider.dart';
+import '../providers/expense_provider.dart';
 
 class ExpenseListScreen extends StatelessWidget {
   const ExpenseListScreen({Key? key}) : super(key: key);
 
-  List<Expense> get _mockExpenses => [
-        Expense(
-          id: '1',
-          amount: 25.99,
-          category: 'Food',
-          date: DateTime.now().subtract(const Duration(days: 1)),
-          notes: 'Lunch with colleagues',
-        ),
-        Expense(
-          id: '2',
-          amount: 45.50,
-          category: 'Transportation',
-          date: DateTime.now().subtract(const Duration(days: 2)),
-          notes: 'Uber rides',
-        ),
-        Expense(
-          id: '3',
-          amount: 120.00,
-          category: 'Shopping',
-          date: DateTime.now().subtract(const Duration(days: 3)),
-          notes: 'New headphones',
-        ),
-        Expense(
-          id: '4',
-          amount: 75.00,
-          category: 'Bills',
-          date: DateTime.now().subtract(const Duration(days: 4)),
-          notes: 'Electricity bill',
-        ),
-      ];
-
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: _mockExpenses.length,
-      itemBuilder: (context, index) {
-        final expense = _mockExpenses[index];
-        return Card(
-          color: Colors.white,
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: _getCategoryColor(expense.category),
-              child: Icon(
-                _getCategoryIcon(expense.category),
-                color: Colors.white,
+    return Consumer<ExpenseProvider>(
+      builder: (context, expenseProvider, child) {
+        final expenses = expenseProvider.expenses;
+
+        if (expenses.isEmpty) {
+          return const Center(
+            child: Text(
+              'No expenses yet. Add some!',
+              style: TextStyle(fontSize: 18),
+            ),
+          );
+        }
+
+        return GridView.builder(
+          padding: const EdgeInsets.all(16),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.85,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+          ),
+          itemCount: expenses.length,
+          itemBuilder: (context, index) {
+            final expense = expenses[index];
+            return Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
-            ),
-            title: Text(
-              '\$${expense.amount.toStringAsFixed(2)} - ${expense.category}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _formatDate(expense.date),
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                  ),
-                ),
-                if (expense.notes != null && expense.notes!.isNotEmpty)
-                  Text(
-                    expense.notes!,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Colors.white,
-                    title: const Text('Delete Expense'),
-                    content: const Text(
-                      'Are you sure you want to delete this expense?',
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
+              child: InkWell(
+                onLongPress: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      backgroundColor: Colors.white,
+                      title: const Text('Delete Expense'),
+                      content: const Text(
+                        'Are you sure you want to delete this expense?',
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Delete functionality coming soon'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            expenseProvider.deleteExpense(expense.id ?? '');
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Expense deleted'),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Delete',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor:
+                                _getCategoryColor(expense.category),
+                            child: Icon(
+                              _getCategoryIcon(expense.category),
+                              color: Colors.white,
+                              size: 20,
                             ),
-                          );
-                        },
-                        child: const Text(
-                          'Delete',
-                          style: TextStyle(color: Colors.red),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              expense.category,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        '\$${expense.amount.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _formatDate(expense.date),
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
+                      ),
+                      if (expense.notes != null &&
+                          expense.notes!.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          expense.notes!,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ],
                   ),
-                );
-              },
-            ),
-          ),
+                ),
+              ),
+            );
+          },
         );
       },
     );

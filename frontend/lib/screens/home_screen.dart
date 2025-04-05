@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         title: const Text('Logout'),
         content: const Text('Are you sure you want to logout?'),
         actions: [

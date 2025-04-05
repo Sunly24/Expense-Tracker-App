@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/expense_provider.dart';
+import '../models/expense.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({Key? key}) : super(key: key);
@@ -46,10 +49,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
+      // Create new expense
+      final expense = Expense(
+        id: DateTime.now().toString(), // Simple ID generation
+        amount: double.parse(_amountController.text),
+        category: _selectedCategory,
+        date: _selectedDate,
+        notes: _notesController.text.trim(),
+      );
+
+      Provider.of<ExpenseProvider>(context, listen: false).addExpense(expense);
+
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Add expense functionality coming soon!'),
+          content: Text('Expense added successfully!'),
           backgroundColor: Colors.green,
         ),
       );
