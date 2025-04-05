@@ -4,7 +4,7 @@ import '../models/expense.dart';
 import 'auth_service.dart';
 
 class ExpenseService {
-  static const String baseUrl = 'http://localhost:3000/api';
+  static const String baseUrl = 'http://localhost:3000/';
   final AuthService _authService;
 
   ExpenseService(this._authService);
