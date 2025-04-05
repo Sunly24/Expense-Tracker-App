@@ -1,16 +1,46 @@
-# frontend
-
-A new Flutter project.
+# Expense Tracker App
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Installation
 
-A few resources to get you started if this is your first Flutter project:
+ Clone the repository
+```bash
+git clone
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+ Navigate to the project directory
+```bash
+cd expense-tracker/frontend
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+ Install dependencies
+```bash
+flutter pub get
+```
+
+ Navigate to backend directory
+```bash
+cd expense-tracker/backend
+```
+
+ Install dependencies
+```bash
+npm install
+```
+
+ Navigate to backend directory
+```bash
+cd expense-tracker/backend
+```
+
+ Install dependencies
+```bash
+npm install
+```
+
+
+ Run the application
+```bash
+flutter run
+```

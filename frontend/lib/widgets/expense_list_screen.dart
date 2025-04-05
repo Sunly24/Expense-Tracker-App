@@ -57,7 +57,9 @@ class ExpenseListScreen extends StatelessWidget {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Expense deleted'),
+                                backgroundColor: Colors.red,
+                                content: Text('Expense deleted',
+                                    style: TextStyle(color: Colors.white)),
                               ),
                             );
                           },
